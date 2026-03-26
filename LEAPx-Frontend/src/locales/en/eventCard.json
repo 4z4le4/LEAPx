@@ -1,0 +1,57 @@
+{
+  "hero": {
+    "expandImage": "Expand image",
+    "noImage": "No Image",
+    "noMap": "No Map"
+  },
+  "section": {
+    "detail": "Description",
+    "place": "Location"
+  },
+  "quota": {
+    "participants": {
+      "closed": "Participants (not accepting)",
+      "unlimited": "Participants (unlimited)",
+      "normal": "Participants"
+    },
+    "staff": {
+      "closed": "Staff (not accepting)",
+      "unlimited": "Staff (unlimited)",
+      "normal": "Staff"
+    },
+    "walkin": {
+      "normal": "Walk-in",
+      "closed": "Not accepting Walk-in",
+      "unlimited": "Walk-in (unlimited)"
+    },
+    "suffix": {
+      "closed": "Registration unavailable",
+      "unlimited": "{{count}} people",
+      "normal": "{{current}}/{{max}}"
+    }
+  },
+  "cta": {
+    "registeredStaff": "Registered as staff",
+    "registeredAttendee": "Registered",
+    "registerStaff": "Register as staff",
+    "registerStaffLoading": "Registering staff…",
+    "registerAttendee": "Register to join",
+    "registerAttendeeLoading": "Registering…",
+    "staffDisabled": "Cannot register as staff",
+    "attendeeDisabled": "Cannot register",
+    "soon": "Registration opens soon",
+    "closed": "Registration closed"
+  },
+  "lightbox": {
+    "closeTitle": "Close",
+    "prev": "Previous image",
+    "next": "Next image"
+  },
+  "meta": {
+    "registrationCondition": "Registration condition",
+    "staffCondition": "Staff condition",
+    "registrationWindow": "Registration period",
+    "activityDate": "Activity date",
+    "organizedBy": "Organized by"
+  }
+}

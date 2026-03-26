@@ -1,0 +1,40 @@
+{
+    "nav": {
+        "home": "Home",
+        "activities": "Activities",
+        "qrcode": "QR Code",
+        "faq": "FAQ",
+        "contact": "Contact Us",
+        "about": "About Us",
+        "profile": "Profile",
+        "logout": "Logout",
+        "login": "Register / Login",
+        "admin": "Admin",
+        "staff": "Staff",
+        "organizer": "Organizer",
+        "scanStaff": "Scan Staff QR"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "viewMore": "View More",
+        "previous": "Previous",
+        "next": "Next",
+        "online": "Online",
+        "tba": "Location TBA"
+    },
+    "activities": {
+        "title": "All Activities",
+        "upcoming": "Upcoming Activities",
+        "all": "All Activities",
+        "loadingActivities": "Loading activities...",
+        "loadError": "Failed to load data",
+        "noActivities": "No activities found matching your criteria",
+        "page": "Page"
+    },
+    "status": {
+        "open": "Open",
+        "soon": "Coming Soon",
+        "closed": "Closed"
+    }
+}

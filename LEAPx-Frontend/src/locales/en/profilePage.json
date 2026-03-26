@@ -1,0 +1,104 @@
+{
+  "tabs": {
+    "overview": "Overview",
+    "skills": "Skill Details",
+    "history": "History"
+  },
+  "error": {
+    "title": "Something went wrong"
+  },
+  "empty": {
+    "title": "No data found",
+    "description": "Please try again later"
+  },
+  "radar": {
+    "status": {
+      "passed": "Activity requirements passed",
+      "notPassed": "Activity requirements not met"
+    },
+    "units": {
+    "level": "Lv",
+    "dimension": "areas"
+    },
+    "summary": {
+      "title": "Activity Summary",
+      "skillLevel": "Skill Levels",
+      "skillLevelDesc": "All sub-skills combined must reach {{target}} Lv",
+      "mainSkill": "Main Skills",
+      "mainSkillDesc": "At least {{target}} main skills required",
+      "target": "Target",
+      "passedLevel": "Passed {{value}} Lv",
+      "passedSkill": "Passed {{value}} skills",
+      "needMoreLevel": "Need {{value}} more Lv",
+      "needMoreSkill": "Need {{value}} more main skills"
+    },
+    "chart": {
+      "title": "Your Skill Overview",
+      "level": "Level"
+    }
+  },
+    "skillDetail": {
+        "selectMainSkill": "Select Main Skill",
+        "subSkillsTitle": "Sub Skills",
+        "lv": "Lv",
+        "lvShort": "Lv.",
+        "exp": "EXP",
+        "levelNames": {
+        "I": "Familiar",
+        "II": "Understand",
+        "III": "Apply",
+        "IV": "Lead"
+        },
+        "pendingUnlock": "{{exp}} EXP pending to unlock (will gain {{stars}} stars)",
+        "toNextStar": "{{exp}} EXP to next star",
+        "full": "Maxed out!"
+    },
+        "history": {
+        "title": "Participation History",
+        "stats": {
+            "all": "All",
+            "completed": "Completed",
+            "pending": "In progress",
+            "cancelled": "Cancelled",
+            "attended": "Attending",
+            "late": "Late"
+        },
+        "viewMode": {
+            "participant": "Events as participant ({{count}})",
+            "staff": "Events as staff ({{count}})"
+        },
+        "category": {
+            "pending": "In progress",
+            "completed": "Completed",
+            "cancelled": "Cancelled",
+            "all": "All"
+        },
+        "emptyCategory": "No events in this category",
+        "pagination": "Page {{current}} of {{totalPages}} ({{totalCount}} items)",
+        "status": {
+            "completed": "Completed",
+            "registered": "Registered",
+            "pending": "Pending",
+            "cancelled": "Cancelled",
+            "attended": "Attending",
+            "late": "Late"
+        },
+        "staffBadge": "Staff",
+        "exp": "EXP",
+        "expEarned": "+{{exp}} EXP",
+        "skillsReceived": "Skills received ({{count}} domains)",
+        "checkin": "Check-in",
+        "checkout": "Check-out",
+        "subSkills": "Sub-skills ({{count}})",
+        "levelType": "Level {{level}}",
+        "received": "Received:",
+        "baseBonus": "Base: {{base}} + Bonus: {{bonus}}",
+        "cancelButton": "Cancel Registration",
+        "cancelConfirm": "Confirm Cancellation",
+        "cancelNo" : "No, go back",
+        "cancelYes" : "Yes, cancel it",
+        "cancelling": "Cancelling...",
+        "cancelSuccess": "Registration cancelled successfully"
+        }
+
+}

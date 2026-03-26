@@ -1,0 +1,82 @@
+/* Tailwind layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- ค่าพื้นฐานที่จำเป็นเท่านั้น ---- */
+
+/* ใช้ dark mode แบบ class (ไม่บังคับสีทั้งแอป) */
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* ให้ตัวอักษรเรียบและคงระบบฟอนต์จาก Tailwind/ระบบ */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  @apply antialiased;
+}
+
+/* ยกเลิกสไตล์ปุ่มจาก Vite (ปล่อยให้ Tailwind คุม) */
+/* ห้ามมี button{}, a{} พื้นฐานที่กำหนดสี/พื้นหลัง/ขอบเอง */
+
+/* --- ตัวเลือกเสริม (ปลอดภัย) --- */
+
+/* กันล้นแนวนอนทั้งหน้า */
+html,
+body,
+#root {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ซ่อนสกรอลล์บาร์ (ยังเลื่อนได้) ถ้าอยากซ่อนจริง ๆ ค่อยเปิดบล็อกนี้ */
+/*
+html, body, #root { overflow-y: auto; -ms-overflow-style: none; scrollbar-width: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar, #root::-webkit-scrollbar { width: 0; height: 0; }
+*/
+
+/* ซ่อนสกอร์บาร์ทุกเบราว์เซอร์ */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari/Opera */
+}
+
+/* Notification Prompt Animation */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Notification prompt obile */
+@media (max-width: 768px) {
+  .notification-prompt-mobile {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 12px 12px 0 0;
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "loading": "Loading activity details…",
+  "fallbackTitle": "Activity",
+  "noDescription": "No description yet",
+  "noVenue": "Venue not specified",
+  "online": "Online",
+
+  "notFound": {
+    "title": "Activity not found",
+    "description": "Please check the link or select an activity from the activity list.",
+    "backButton": "Back to all activities"
+  },
+
+  "chips": {
+    "allStudents": "All students",
+    "year": "Year {{year}}",
+    "engineeringStudents": "Engineering students"
+  },
+
+  "staff": {
+    "acceptAllYears": "Staff: all years accepted",
+    "acceptYearsRange": "Staff accepted years: {{ranges}}"
+  },
+
+  "status": {
+    "opensAt": "Opens {{date}}",
+    "neverOpened": "Registration not available",
+    "full": "Fully booked",
+    "ended": "Activity has ended",
+    "registrationClosed": "Registration closed"
+  },
+
+  "onlineClosed": {
+    "notAccepting": "Cannot register as attendee · Not accepting",
+    "full": "Cannot register as attendee · Full"
+  },
+
+  "staffClosed": {
+    "notAccepting": "Cannot register as staff · Not accepting",
+    "full": "Cannot register as staff · Full"
+  },
+
+  "toast": {
+    "registerAttendee": {
+      "loading": "Registering as attendee…",
+      "success": "Registered as attendee 🎉"
+    },
+    "registerStaff": {
+      "loading": "Registering as staff…",
+      "success": "Registered as staff 🎉"
+    }
+  }
+}

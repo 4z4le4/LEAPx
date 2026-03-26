@@ -1,0 +1,74 @@
+{
+  "banner": { "empty": "No banners yet" },
+  "hero": {
+    "title": {
+      "line1": "Level up learning beyond the classroom",
+      "line2": "with activities that build real skills"
+    },
+    "desc": "This platform helps students explore and join activities to develop academic, life, and professional skills. Each activity contributes skill points and becomes an important part of the year promotion requirements.",
+    "cta": {
+      "activities": "View open activities",
+      "conditions": "Learn promotion requirements"
+    },
+    "imageAlt": "Learning illustration"
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "steps": {
+      "1": { "step": "Step 1", "title": "Choose an activity", "desc": "Find activities and view details" },
+      "2": { "step": "Step 2", "title": "Join the activity", "desc": "Register / check-in and follow assessments" },
+      "3": { "step": "Step 3", "title": "Earn EXP & skill levels", "desc": "EXP is recorded automatically and skill levels update" },
+      "4": { "step": "Step 4", "title": "Check promotion requirements", "desc": "Ensure you meet the criteria for year promotion" }
+    }
+  },
+  "conditions": {
+    "title": "Activity pass criteria",
+    "items": {
+      "1": { "label": "Skill levels", "text": "Complete all sub-skills totaling 10 levels" },
+      "2": { "label": "Main skills", "text": "Have at least 3 main skills" }
+    }
+  },
+  "categories": {
+    "title": "Activity categories",
+    "noServerUrl": {
+      "prefix": "Missing",
+      "suffix": "(e.g., VITE_LEAP_BACKEND_URL), so categories cannot be loaded from the API yet."
+    },
+    "error": { "title": "Failed to load categories", "retry": "Retry" },
+    "empty": "No categories found from current homepage events.",
+    "itemPrefix": "Activities by ",
+    "viewAll": "View all activities →"
+  },
+  "benefits": {
+    "title": "Benefits for students and the university",
+    "student": {
+      "title": "For students",
+      "items": {
+        "1": "• Track progress via EXP and skill levels",
+        "2": "• Build an activity profile/badges for career readiness",
+        "3": "• Choose a personalized skill development path"
+      }
+    },
+    "staff": {
+      "title": "For staff / departments",
+      "items": {
+        "1": "• Monitor extracurricular learning in real time",
+        "2": "• Design activities aligned with assessment criteria",
+        "3": "• Use participation data for analysis and planning"
+      }
+    },
+    "university": {
+      "title": "For the university",
+      "items": {
+        "1": "• Centralized, transparent, auditable process",
+        "2": "• Concrete competency development with measurable outcomes",
+        "3": "• Expand partnerships with industry and organizations"
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to build your future skills on your own terms?",
+    "login": "Sign in with CMU",
+    "viewAll": "View all activities"
+  }
+}

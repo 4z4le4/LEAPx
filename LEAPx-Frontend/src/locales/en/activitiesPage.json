@@ -1,0 +1,7 @@
+{
+    "title": "All activities",
+    "loadingActivities": "Loading activities…",
+    "loadError": "Failed to load activities",
+    "noActivities": "No activities to display yet",
+    "page": "Page"
+}

@@ -1,0 +1,22 @@
+{
+    "cta": {
+        "open": "ลงทะเบียน",
+        "soon": "เร็ว ๆ นี้",
+        "closed": "ปิดรับสมัคร"
+    },
+    "label": {
+        "openRegistration": "เปิดลงทะเบียน",
+        "startActivity": "เริ่มกิจกรรม"
+    },
+    "skillsDefault": "ทั่วไป",
+    "quota": {
+        "participants": "ผู้เข้าร่วม",
+        "staff": "สตาฟ",
+        "unlimited": "(ไม่จำกัด)"
+    },
+    "noImage": "ไม่มีรูปภาพ",
+    "chips": {
+        "organizedBy": "จัดโดย"
+    }
+
+}

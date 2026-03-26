@@ -1,0 +1,20 @@
+{
+    "title": "Organizer",
+    "loading": "Loading…",
+    "loadFailed": "Failed to load data. Please try again.",
+    "empty": "No events available for you to manage yet.",
+    "statusLabel": "Status",
+    "locationFallback": "Location not specified",
+    "majorFallback": "Uncategorized",
+    "table": {
+        "event": "Event",
+        "timeLocation": "Time & Location",
+        "major": "Category",
+        "scan": "Staff check-in"
+    },
+    "scanButton": "Staff check-in",
+    "pagination": {
+        "prev": "Previous",
+        "next": "Next"
+    }
+}

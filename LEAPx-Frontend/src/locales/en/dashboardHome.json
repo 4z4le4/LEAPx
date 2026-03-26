@@ -1,0 +1,8 @@
+{
+    "loadingActivities": "Loading activities…",
+    "loadErrorPrefix": "Failed to load data",
+    "loadErrorFallback": "Something went wrong",
+    "upcomingTitle": "Upcoming activities",
+    "allTitle": "All activities",
+    "seeMore": "See more"
+}

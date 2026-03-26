@@ -1,0 +1,8 @@
+{
+    "loadingActivities": "กำลังโหลดกิจกรรม…",
+    "loadErrorPrefix": "โหลดข้อมูลไม่สำเร็จ",
+    "loadErrorFallback": "เกิดข้อผิดพลาด",
+    "upcomingTitle": "กิจกรรมที่จะมาถึง",
+    "allTitle": "กิจกรรมทั้งหมด",
+    "seeMore": "ดูเพิ่มเติม"
+}

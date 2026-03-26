@@ -1,0 +1,37 @@
+{
+    "title": "Assigned Staff Events",
+    "table": {
+        "event": "Event",
+        "timeLocation": "Time & Location",
+        "role": "Role",
+        "scan": "Check-in Scan"
+    },
+    "loading": "Loading…",
+    "loadFailed": "Failed to load. Please try again.",
+    "empty": "You have no staff registrations yet.",
+    "statusLabel": "Status",
+    "locationFallback": "Location not specified",
+    "roleFallback": "General duties",
+    "scanButton": "Scan",
+    "pagination": {
+        "prev": "Previous",
+        "next": "Next"
+    },
+    "role": {
+        "pending": "Pending approval",
+        "fallback": "Assigned"
+    },
+    "filters": {
+    "all": "All",
+    "upcoming": "Upcoming",
+    "ongoing": "Ongoing",
+    "completed": "Completed",
+    "pending": "Pending"
+    },
+    "sort": {
+        "newest": "Newest events → Oldest",
+        "oldest": "Oldest events → Newest",
+        "registeredNewest": "Recently registered",
+        "registeredOldest": "Longest registered"
+    }
+}

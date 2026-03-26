@@ -1,0 +1,21 @@
+{
+    "cta": {
+        "open": "Register",
+        "soon": "Coming soon",
+        "closed": "Closed"
+    },
+    "label": {
+        "openRegistration": "Registration opens",
+        "startActivity": "Activity starts"
+    },
+    "skillsDefault": "General",
+    "quota": {
+        "participants": "Participants",
+        "staff": "Staff",
+        "unlimited": "(Unlimited)"
+    },
+    "noImage": "No image",
+    "chips": {
+        "organizedBy": "Organized by"
+    }
+}

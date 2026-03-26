@@ -1,0 +1,35 @@
+{
+    "title": "Contact Us",
+    "subtitle": "If you encounter issues or need more information, please reach us via the channels below.",
+    "labels": {
+        "email": "Email:",
+        "phone": "Phone:",
+        "hours": "Office Hours:"
+    },
+    "primary": {
+        "title": "Primary channel",
+        "hoursValue": "Mon–Fri 09:00–16:00 (Closed Sat–Sun)"
+    },
+    "secondary": {
+        "title": "Secondary channel"
+    },
+    "issues": {
+        "title": "Issue types you can report",
+        "items": [
+            "Unable to sign in / system down",
+            "Account locked or password not working",
+            "Incorrect or missing activity information",
+            "EXP/level tracking issues"
+        ]
+    },
+    "office": {
+        "title": "Office address",
+        "openInMaps": "Open in Maps",
+        "mapTitle": "Office map"
+    },
+    "mapFallback": {
+        "title": "This map link cannot be embedded.",
+        "hint": "If it is a short link, use “Embed a map” or provide coordinates/address instead.",
+        "open": "Open in Google Maps"
+    }
+}

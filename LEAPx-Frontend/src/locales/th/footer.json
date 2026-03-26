@@ -1,0 +1,41 @@
+{
+  "brand": {
+    "logoAlt": "LEAP",
+    "name": "Learning & Experience Advancement Platform",
+    "tagline": "ระบบเพื่อการเรียนรู้สะสมประสบการณ์และการพัฒนาศักยภาพ",
+    "copyright": "© 2025 LEAP Platform. All rights reserved."
+  },
+  "sections": {
+    "categories": "หมวดหมู่กิจกรรม",
+    "quickLinks": "ลิงก์ด่วน",
+    "contact": "ข้อมูลการติดต่อ"
+  },
+  "categories": {
+    "itemPrefix": "กิจกรรม สาขา"
+  },
+  "quickLinks": {
+    "items": {
+      "about": "เกี่ยวกับเรา",
+      "faq": "คำถามที่พบบ่อย",
+      "contact": "ติดต่อเรา"
+    }
+  },
+  "contact": {
+    "org": "คณะวิศวกรรมศาสตร์ มหาวิทยาลัยเชียงใหม่",
+    "phone": "โทรศัพท์: 053-994179 ต่อ 100, 111, 112, 115",
+    "social": {
+      "facebookHref": "#",
+      "instagramHref": "#",
+      "locationHref": "#"
+    }
+  },
+  "policies": {
+    "terms": "เงื่อนไขการใช้งาน",
+    "privacy": "นโยบายความเป็นส่วนตัว",
+    "security": "ความปลอดภัย",
+    "cookies": "นโยบายคุกกี้"
+  },
+  "placeholders": {
+    "comingSoon": "รอใส่ข้อมูล"
+  }
+}

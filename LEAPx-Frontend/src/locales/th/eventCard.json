@@ -1,0 +1,52 @@
+{
+  "hero": {
+    "expandImage": "ขยายรูป",
+    "noImage": "ไม่มีรูปภาพ",
+    "noMap": "ไม่มีแผนที่"
+  },
+  "section": {
+    "detail": "รายละเอียด",
+    "place": "สถานที่"
+  },
+  "quota": {
+    "participants": {
+      "closed": "จำนวนผู้เข้าร่วม (ไม่เปิดรับ)",
+      "unlimited": "จำนวนผู้เข้าร่วม (ไม่จำกัด)",
+      "normal": "จำนวนผู้เข้าร่วม"
+    },
+    "staff": {
+      "closed": "จำนวนสตาฟ (ไม่เปิดรับ)",
+      "unlimited": "จำนวนสตาฟ (ไม่จำกัด)",
+      "normal": "จำนวนสตาฟ"
+    },
+    "walkin": {
+      "normal": "จำนวน Walk-in",
+      "closed": "ไม่รับ Walk-in",
+      "unlimited": "จำนวน Walk-in (ไม่จำกัด)"
+    },
+    "suffix": {
+      "closed": "ไม่เปิดรับ",
+      "unlimited": "{{count}} คน",
+      "normal": "{{current}}/{{max}}"
+    }
+  },
+  "cta": {
+    "registeredStaff": "ลงทะเบียนสตาฟแล้ว",
+    "registeredAttendee": "ลงทะเบียนแล้ว",
+    "registerStaff": "ลงทะเบียนเป็นสตาฟ",
+    "registerStaffLoading": "กำลังลงทะเบียนสตาฟ…",
+    "registerAttendee": "ลงทะเบียนเข้าร่วม",
+    "registerAttendeeLoading": "กำลังลงทะเบียน…",
+    "staffDisabled": "ไม่สามารถลงทะเบียนสตาฟได้",
+    "attendeeDisabled": "ไม่สามารถลงทะเบียนเข้าร่วมได้",
+    "soon": "จะเปิดลงทะเบียนเร็ว ๆ นี้",
+    "closed": "ไม่สามารถลงทะเบียนได้"
+  },
+  "meta": {
+    "registrationCondition": "เงื่อนไขการลงทะเบียน",
+    "staffCondition": "เงื่อนไขการลงสตาฟ",
+    "registrationWindow": "วันเปิดลงทะเบียน",
+    "activityDate": "วันจัดกิจกรรม",
+    "organizedBy": "จัดโดย"
+  }
+}

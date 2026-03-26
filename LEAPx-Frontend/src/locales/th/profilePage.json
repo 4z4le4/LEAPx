@@ -1,0 +1,106 @@
+{
+  "tabs": {
+    "overview": "ภาพรวม",
+    "skills": "รายละเอียดสกิล",
+    "history": "ประวัติ"
+  },
+  "error": {
+    "title": "เกิดข้อผิดพลาด"
+  },
+  "empty": {
+    "title": "ไม่พบข้อมูล",
+    "description": "กรุณาลองใหม่อีกครั้ง"
+  },
+  "radar": {
+    "status": {
+      "passed": "ผ่านเกณฑ์กิจกรรม",
+      "notPassed": "ยังไม่ผ่านเกณฑ์กิจกรรม"
+    },
+    "units": {
+    "level": "Lv",
+    "dimension": "ด้าน"
+    },
+    "summary": {
+      "title": "สรุปคะแนนกิจกรรม",
+      "skillLevel": "ระดับของสกิล",
+      "skillLevelDesc": "ต้องมีสกิลย่อยทุกสกิล รวม {{target}} Lv",
+      "mainSkill": "สกิลหลัก",
+      "mainSkillDesc": "ต้องมีสกิลหลักอย่างน้อย {{target}} สกิล",
+      "target": "เป้าหมาย",
+      "passedLevel": "ผ่านเกณฑ์ {{value}} Lv",
+      "passedSkill": "ผ่านเกณฑ์ {{value}} ด้าน",
+      "needMoreLevel": "ต้องการอีก {{value}} Lv",
+      "needMoreSkill": "ต้องปลดล็อคสกิลหลักอีก {{value}} ด้าน"
+    },
+    "chart": {
+      "title": "ภาพรวมสกิลของคุณ",
+      "level": "Level"
+    }
+  },
+  "skillDetail": {
+    "selectMainSkill": "เลือกสกิลหลัก",
+    "subSkillsTitle": "สกิลย่อย",
+    "lv": "Lv",
+    "lvShort": "Lv.",
+    "exp": "EXP",
+    "levelNames": {
+      "I": "รู้จัก",
+      "II": "เข้าใจ",
+      "III": "ใช้เป็น",
+      "IV": "ผู้นำ"
+    },
+    "pendingUnlock": "มี {{exp}} EXP รอปลดล็อค (จะได้ {{stars}} ดาว)",
+    "toNextStar": "อีก {{exp}} EXP ถึงดาวถัดไป",
+    "full": "เต็มแล้ว!"
+  },
+    "history": {
+    "title": "ประวัติการเข้าร่วมกิจกรรม",
+    "stats": {
+        "all": "ทั้งหมด",
+        "completed": "สำเร็จ",
+        "pending": "กำลังดำเนินการ",
+        "cancelled": "ยกเลิก",
+        "attended": "กำลังเข้าร่วม",
+        "late": "มาสาย"
+
+    },
+    "viewMode": {
+        "participant": "กิจกรรมที่เป็นผู้เข้าร่วม ({{count}})",
+        "staff": "กิจกรรมที่เป็นทีมงาน ({{count}})"
+    },
+    "category": {
+        "pending": "กำลังดำเนินการ",
+        "completed": "สำเร็จ",
+        "cancelled": "ยกเลิก",
+        "all": "ทั้งหมด"
+    },
+    "emptyCategory": "ไม่มีกิจกรรมในหมวดหมู่นี้",
+    "pagination": "หน้า {{current}} จาก {{totalPages}} ({{totalCount}} รายการ)",
+    "status": {
+        "completed": "เสร็จสิ้น",
+        "registered": "ลงทะเบียนแล้ว",
+        "pending": "กำลังดำเนินการ",
+        "cancelled": "ยกเลิก",
+        "attended": "กำลังเข้าร่วม",
+        "late": "มาสาย"
+    },
+    "staffBadge": "ทีมงาน",
+    "exp": "EXP",
+    "expEarned": "+{{exp}} EXP",
+    "skillsReceived": "ทักษะที่ได้รับ ({{count}} ด้าน)",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "subSkills": "ทักษะย่อย ({{count}})",
+    "levelType": "เลเวล {{level}}",
+    "received": "ได้รับ:",
+    "baseBonus": "Base: {{base}} + Bonus: {{bonus}}",
+    "cancelButton": "ยกเลิกการลงทะเบียน",
+    "cancelConfirm": "ยืนยันการยกเลิก",
+    "cancelNo" : "ไม่ยกเลิก",
+    "cancelYes" : "ใช่, ยกเลิก",
+    "cancelling": "กำลังยกเลิก...",
+    "cancelSuccess": "ยกเลิกการลงทะเบียนสำเร็จ"
+    }
+
+
+}

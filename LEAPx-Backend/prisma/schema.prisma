@@ -1,0 +1,1117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // NOTE: The `url` datasource property is no longer supported in Prisma schema files (Prisma 7+).
+  // Move connection URLs for Migrate to `prisma.config.ts` and provide `adapter` (for direct DB)
+  // or `accelerateUrl` (for Accelerate) to the PrismaClient constructor as documented:
+  // https://pris.ly/d/config-datasource and https://pris.ly/d/prisma7-client-config
+}
+
+// ========== User Management ==========
+
+model User {
+  id                  Int                         @id // cmu รหัสนักศึกษาเป็น ID หลัก
+  firstName           String
+  lastName            String
+  email               String                      @unique
+  role_id             Int
+  faculty             String
+  major               String?
+  phone               String?
+  photo               String?
+  isActive            Boolean                     @default(true)
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+  
+  // Relations
+  role                Role                        @relation(fields: [role_id], references: [id])
+  mainSkillLevels     UserMainSkillLevel[]
+  subSkillLevels      UserSubSkillLevel[]
+  experienceHistory   ExperienceHistory[]
+  eventRegistrations  EventRegistration[]
+  skillEvaluations    SkillEvaluation[]
+  // adminCategories     AdminBySkillCategory[]
+  // evaluationResponses EvaluationResponse[]
+  notifications       Notification[]
+  majorAdmins         MajorAdmin[]  
+  userSpecialSkillLevels UserSpecialSkillLevel[]
+  specialSkillHistory    SpecialSkillHistory[]
+  evaluationResponses EvaluationResponse[]
+  
+  // Event Staff Relations
+  eventStaffAssignments EventStaff[]
+  createdEvents         Event[]               @relation("EventCreator")
+
+  fcmTokens        UserFCMToken[]
+  
+  @@index([email])
+  @@index([firstName, lastName])
+  @@index([faculty])
+}
+
+model Role {
+  id          Int       @id @default(autoincrement())
+  name        RoleType  @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  users       User[]
+}
+
+enum RoleType {
+  SUPREME         // ผู้ดูแลระบบสูงสุด
+  SKILL_ADMIN     // แอดมินของกลุ่มทักษะเฉพาะด้าน
+  ACTIVITY_ADMIN  // ผู้ดูแลกิจกรรม
+  STUDENT         // นักเรียน
+  ALUMNI          // ศิษย์เก่า
+  USER            // ผู้ใช้ทั่วไป
+}
+
+model UserFCMToken {
+  id          Int      @id @default(autoincrement())
+  user_id     Int?     
+  token       String   @unique // FCM token
+  deviceInfo  String?  // User agent / device info
+  isActive    Boolean  @default(true)
+  lastUsed    DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@index([user_id])
+  @@index([isActive])
+}
+
+
+// ========== Skill & Category Management ==========
+
+// หัวข้อใหญ่ 6 ด้าน
+model MainSkillCategory {
+  id              Int                     @id @default(autoincrement())
+  name_TH         String
+  name_EN         String
+  description_TH  String?
+  description_EN  String?
+  slug            String                  @unique
+  icon            String?                 // ไอคอนของทักษะ
+  color           String?                 // สีประจำทักษะ
+  isActive        Boolean                 @default(true)
+  sortOrder       Int                     @default(0)  // สำหรับจัดลำดับการแสดงผล ยิ่งมากยิ่งสำคัญ
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  
+  // Relations
+  subSkills       SubSkillCategory[]
+  userMainSkillLevels UserMainSkillLevel[]
+  // adminCategories AdminBySkillCategory[]
+
+  // 68 69
+  
+  @@index([isActive, sortOrder])
+  @@index([isActive])
+}
+
+// หัวข้อย่อย 3 ด้านในแต่ละหัวข้อใหญ่
+model SubSkillCategory {
+  id                Int                     @id @default(autoincrement())
+  mainSkillCategory_id Int
+  name_TH           String
+  name_EN           String
+  description_TH    String?
+  description_EN    String?
+  slug              String                  @unique
+  icon              String?
+  color             String?
+  isActive          Boolean                 @default(true)
+  sortOrder         Int                     @default(0)
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  
+  // Relations
+  mainSkillCategory MainSkillCategory       @relation(fields: [mainSkillCategory_id], references: [id])
+  eventSkillRewards EventSkillReward[]      // NEW: Events can give exp to this skill
+  userSubSkillLevels UserSubSkillLevel[]
+  experienceHistory ExperienceHistory[]
+  skillEvaluations  SkillEvaluation[]
+  checkInTimeSlotSkillRewards CheckInTimeSlotSkillReward[]
+  
+  @@unique([mainSkillCategory_id, sortOrder])
+  @@index([mainSkillCategory_id, isActive])
+}
+
+// ระดับของทักษะหลัก (คำนวณจาก sub skills)
+model UserMainSkillLevel {
+  id                   Int               @id @default(autoincrement())
+  user_id              Int
+  mainSkillCategory_id Int
+  
+  // Calculated from sub skills
+  maxLevel             Int               @default(0)  // Level สูงสุดจาก sub skills (1-4)
+  averageLevel         Float             @default(0)  // Level เฉลี่ยจาก sub skills
+  totalExp             Int               @default(0)  // รวม exp ทั้งหมดใน main category
+  totalStars           Int               @default(0)  // รวมจำนวนดาวทั้งหมด
+  
+  // Level breakdown (how many sub skills have reached each level)
+  Level_I_count        Int               @default(0)  // จำนวน sub skills ที่มี Level I ดาว
+  Level_II_count       Int               @default(0)  // จำนวน sub skills ที่มี Level II ดาว
+  Level_III_count      Int               @default(0) // จำนวน sub skills ที่มี Level III ดาว
+  Level_IV_count       Int               @default(0)  // จำนวน sub skills ที่มี Level IV ดาว
+  
+  // Metadata
+  lastCalculated       DateTime          @default(now())
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  
+  user                 User              @relation(fields: [user_id], references: [id])
+  mainSkillCategory    MainSkillCategory @relation(fields: [mainSkillCategory_id], references: [id])
+  
+  @@unique([user_id, mainSkillCategory_id])
+  @@index([user_id])
+  @@index([mainSkillCategory_id, maxLevel])
+}
+
+// ระดับของทักษะรอง (คำนวณจาก exp จริง)
+model UserSubSkillLevel {
+  id                 Int              @id @default(autoincrement())
+  user_id            Int
+  subSkillCategory_id Int
+  
+  // Experience for each level (accumulated)
+  Level_I_exp        Float              @default(0)  // EXP สำหรับ Level I
+  Level_II_exp       Float              @default(0)  // EXP สำหรับ Level II  
+  Level_III_exp      Float              @default(0)  // EXP สำหรับ Level III
+  Level_IV_exp       Float              @default(0)  // EXP สำหรับ Level IV
+
+  // Star count for each level (how many times completed each level)
+  Level_I_stars      Int              @default(0)  // จำนวนดาว Level I
+  Level_II_stars     Int              @default(0)  // จำนวนดาว Level II
+  Level_III_stars    Int              @default(0) // จำนวนดาว Level III
+  Level_IV_stars     Int              @default(0)  // จำนวนดาว Level IV
+
+  // Current overall level (1-4 based on highest level with at least 1 star)
+  currentLevel       Int              @default(0)  // 0 = ยังไม่มีดาวเลย, 1-4 = Level สูงสุดที่มีดาว
+
+  // Total experience across all levels
+  totalExp           Int              @default(0)  // รวม exp ทั้งหมด
+
+  // Metadata
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  
+  user               User             @relation(fields: [user_id], references: [id])
+  subSkillCategory   SubSkillCategory @relation(fields: [subSkillCategory_id], references: [id])
+  
+  @@unique([user_id, subSkillCategory_id])
+  @@index([user_id])
+  @@index([subSkillCategory_id, currentLevel])
+}
+
+// Level Threshold
+model LevelThreshold {
+  id            Int      @id @default(autoincrement())
+  levelType     levelType   // "I", "II", "III", "IV"
+  expRequired   Int      // 8, 16, 32, 64
+  levelName_TH  String   // "รู้จัก", "เข้าใจ", "ใช้เป็น", "ผู้นำ"
+  levelName_EN  String   // "Familiar", "Understanding", "Proficient", "Leading"
+  sortOrder     Int      // 1, 2, 3, 4
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([levelType])
+  @@index([sortOrder])
+}
+
+
+// ========== Special Skills Management ==========
+
+model SpecialSkill {
+  id              Int                     @id @default(autoincrement())
+  name_TH         String
+  name_EN         String
+  description_TH  String?
+  description_EN  String?
+  slug            String                  @unique
+  icon            String?                                 
+  
+  // Display & Sorting
+  category        String                  @default("DISCIPLINE") //DISCIPLINE วินัย
+  sortOrder       Int                     @default(0)
+  isActive        Boolean                 @default(true)
+  
+  // Metadata
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  
+  // Relations
+  userSpecialSkillLevels UserSpecialSkillLevel[]
+  specialSkillHistory    SpecialSkillHistory[]
+  eventSpecialSkillRewards EventSpecialSkillReward[]
+  
+  @@index([isActive, sortOrder])
+  @@index([category, isActive])
+}
+
+
+model UserSpecialSkillLevel {
+  id                Int              @id @default(autoincrement())
+  user_id           Int
+  specialSkill_id   Int
+  
+  // Experience & Level
+  currentExp        Int              @default(0)  // exp ปัจจุบัน
+  currentLevel      Int              @default(0)  // level ปัจจุบัน (0-maxLevel)
+  
+  // Statistics
+  positiveActions   Int              @default(0)  // จำนวนครั้งที่ได้รับ exp บวก
+  negativeActions   Int              @default(0)  // จำนวนครั้งที่ถูกหัก exp
+  
+  // Achievements
+  maxLevelReached   Int              @default(0)  // level สูงสุดที่เคยถึง
+  reachedMaxAt      DateTime?                     // วันที่ถึง max level ครั้งแรก
+  
+  // Metadata
+  lastUpdated       DateTime         @default(now())
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  user              User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  specialSkill      SpecialSkill     @relation(fields: [specialSkill_id], references: [id], onDelete: Cascade)
+  
+  @@unique([user_id, specialSkill_id])
+  @@index([user_id])
+  @@index([specialSkill_id, currentLevel])
+}
+
+model SpecialSkillHistory {
+  id                Int              @id @default(autoincrement())
+  user_id           Int
+  specialSkill_id   Int
+  event_id          Int?             // ถ้ามาจากกิจกรรม
+  
+  // Changes
+  expChange         Int              // exp ที่เปลี่ยนแปลง (บวกหรือลบ)
+  previousExp       Int              // exp ก่อนเปลี่ยนแปลง
+  newExp            Int              // exp หลังเปลี่ยนแปลง
+  previousLevel     Int              // level ก่อนเปลี่ยนแปลง
+  newLevel          Int              // level หลังเปลี่ยนแปลง
+  
+  // Reason
+  reason_TH         String?
+  reason_EN         String?
+  actionType        SpecialSkillActionType
+  
+  // Admin info (if manually adjusted)
+  adjustedBy        Int?             // User ID ของ admin ที่ปรับ
+  note              String?          // หมายเหตุเพิ่มเติม
+  
+  createdAt         DateTime         @default(now())
+  
+  user              User             @relation(fields: [user_id], references: [id])
+  specialSkill      SpecialSkill     @relation(fields: [specialSkill_id], references: [id])
+  
+  @@index([user_id, specialSkill_id])
+  @@index([createdAt])
+  @@index([actionType])
+}
+
+enum SpecialSkillActionType {
+  EVENT_REWARD        // ได้จากการเข้าร่วมกิจกรรม
+  BONUS               // โบนัส
+  DISCIPLINE_PENALTY  // ถูกหักเพราะละเมิดวินัย
+  LATE_PENALTY        // ถูกหักเพราะมาสาย
+  ABSENCE_PENALTY     // ถูกหักเพราะขาดกิจกรรม
+  MANUAL_ADJUSTMENT   
+  OTHER               
+}
+
+// Junction table: Event -> Special Skill Rewards
+model EventSpecialSkillReward {
+  id                Int              @id @default(autoincrement())
+  event_id          Int
+  specialSkill_id   Int
+  baseExperience    Int              // exp พื้นฐาน
+  bonusExperience   Int              @default(0) // exp โบนัส
+  
+  // Conditions for earning
+  requireCheckIn    Boolean          @default(true)   // ต้องเช็คอินไหม
+  requireCheckOut   Boolean          @default(true)   // ต้องเช็คเอาท์ไหม
+  requireOnTime     Boolean          @default(false)  // ต้องมาตรงเวลาไหม
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  event             Event            @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  specialSkill      SpecialSkill     @relation(fields: [specialSkill_id], references: [id], onDelete: Cascade)
+  
+  @@unique([event_id, specialSkill_id])
+  @@index([specialSkill_id])
+}
+
+
+
+// ========== Major Management ==========
+
+model MajorCategory {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique              // รหัสสาขา เช่น "CPE", "IE", "EE"
+
+  name_TH     String
+  name_EN     String
+  icon        String?
+
+  faculty_TH     String
+  faculty_EN     String
+
+  description_TH String?
+  description_EN String?
+
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  events      Event[]                      
+  admins      MajorAdmin[] 
+  
+  @@index([code])
+  @@index([isActive])
+}
+
+// Major Admin Management
+model MajorAdmin {
+  id                Int           @id @default(autoincrement())
+  user_id           Int
+  majorCategory_id  Int
+  role              MajorAdminRole @default(ADMIN)
+  assignedAt        DateTime      @default(now())
+  assignedBy        Int?          
+  isActive          Boolean       @default(true)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  user              User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  majorCategory     MajorCategory @relation(fields: [majorCategory_id], references: [id], onDelete: Cascade)
+  
+  @@unique([user_id, majorCategory_id])
+  @@index([majorCategory_id, isActive])
+  @@index([user_id])
+}
+
+enum MajorAdminRole {
+  OWNER           // เจ้าของหลัก สามารถทำทุกอย่างรวมถึงเพิ่ม/ลบแอดมิน
+  ADMIN           // แอดมิน สามารถจัดการอีเวนท์และ staff ได้
+}
+
+// ========== Event Management ==========
+model Event {
+  id                  Int                     @id @default(autoincrement())
+  created_by          Int                     
+  majorCategory_id    Int?
+
+  title_TH            String
+  title_EN            String
+  description_TH      String
+  description_EN      String
+  slug                String                  @unique
+
+  //cmu eng
+  isForCMUEngineering Boolean               @default(false)
+  isForCMUEngineering_Staff Boolean          @default(false)
+
+
+  // Year Level Restrictions
+  allowedYearLevels   Int[]                   @default([]) // [1,2,3,4] หรือ [] = ทุกชั้นปี
+  staffAllowedYears   Int[]                   @default([]) // [1,2,3,4] สำหรับ staff หรือ [] = ทุกชั้นปี
+  
+  // Capacity Management
+  maxParticipants     Int                     @default(0)
+  currentParticipants Int                     @default(0)
+  invitedParticipants Int                     @default(0) // Track invited participants separately
+  waitlistEnabled     Boolean                 @default(false)
+
+  // Walk-in Management
+  walkinEnabled       Boolean                 @default(false)
+  walkinCapacity      Int                     @default(0)
+  currentWalkins      Int                     @default(0)
+
+ // Staff Management
+  maxStaffCount          Int    @default(0)
+  currentStaffCount      Int    @default(0)
+  staffCommunicationLink String? @default("")
+
+  // Timing
+  registrationStart   DateTime
+  registrationEnd     DateTime
+  activityStart       DateTime
+  activityEnd         DateTime
+
+  // Check-in Settings
+  allowMultipleCheckIns Boolean               @default(true)
+  checkInWindowBefore   Int                   @default(60) // Minutes before slot start time
+  checkInWindowAfter    Int                   @default(30) // Minutes after slot end time
+
+  // check-in-out normal
+  // checkInStart        DateTime?
+  // checkInEnd          DateTime?
+
+  lateCheckInPenalty  Int                     @default(60) //user
+  staffCheckInTime    Int                     @default(60) //staff
+  
+  // Status & Visibility
+  status              EventStatus             @default(DRAFT)
+  priority            Int                     @default(1)
+  
+  // Location
+  location_TH         String
+  location_EN         String
+  locationMapUrl      String?
+  isOnline           Boolean                  @default(false)
+  meetingLink        String?
+  
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  
+  // Relations
+  creator             User                    @relation("EventCreator", fields: [created_by], references: [id])
+  majorCategory       MajorCategory?          @relation(fields: [majorCategory_id], references: [id]) 
+
+  photos              EventPhoto[]
+  registrations       EventRegistration[]
+  prerequisites       EventPrerequisite[]
+  // evaluations         EventEvaluation[]
+  staffAssignments    EventStaff[]
+  skillRewards        EventSkillReward[]
+  eventInvitations    EventInvitation[]   
+  specialSkillRewards EventSpecialSkillReward[]   
+
+  checkInTimeSlots    CheckInTimeSlot[]
+
+  evaluations EventEvaluation[]
+  
+  @@index([status])
+  @@index([registrationStart, registrationEnd])
+  @@index([created_by])
+  @@index([majorCategory_id])
+}
+
+// model for skill rewards check-in-out multiple
+model CheckInTimeSlot {
+  id          Int      @id @default(autoincrement())
+  event_id    Int
+  startTime   DateTime
+  endTime     DateTime
+
+  slot_number Int
+  
+  // Early check-in window (minutes before startTime that check-in is allowed)
+  // null  = fall back to event.checkInWindowBefore
+  // 0     = no early check-in (only from startTime onward)
+  // N > 0 = allow check-in N minutes before startTime
+  earlyCheckInMinutes Int?     // null = use event.checkInWindowBefore
+
+  // Capacity management
+  slotCapacity        Int?     // Maximum capacity for this slot
+  currentParticipants Int      @default(0) // Current number of participants
+  
+  // Display info
+  name_TH     String?
+  name_EN     String?
+  description_TH String?
+  description_EN String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  event       Event    @relation(fields: [event_id], references: [id], onDelete: Cascade)
+
+  userCheckInRecords UserCheckInRecord[]
+  skillRewards       CheckInTimeSlotSkillReward[]
+
+  @@index([event_id])
+  @@index([startTime, endTime])
+  @@index([event_id, slot_number])
+}
+
+// Junction table: CheckInTimeSlot -> Skill Rewards
+model CheckInTimeSlotSkillReward {
+  id                    Int              @id @default(autoincrement())
+  checkInTimeSlot_id    Int
+  subSkillCategory_id   Int
+  levelType             levelType        // I, II, III, IV
+  baseExperience        Int              // EXP พื้นฐาน
+  bonusExperience       Int              @default(0) // EXP โบนัส
+  
+  // Conditions for earning
+  requireCheckIn        Boolean          @default(true)   // ต้องเช็คอินไหม
+  requireCheckOut       Boolean          @default(true)   // ต้องเช็คเอาท์ไหม
+  requireOnTime         Boolean          @default(false)  // ต้องมาตรงเวลาไหม (ไม่สาย)
+  
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  
+  checkInTimeSlot       CheckInTimeSlot  @relation(fields: [checkInTimeSlot_id], references: [id], onDelete: Cascade)
+  subSkillCategory      SubSkillCategory @relation(fields: [subSkillCategory_id], references: [id])
+  
+  @@unique([checkInTimeSlot_id, subSkillCategory_id, levelType])
+  @@index([checkInTimeSlot_id])
+  @@index([subSkillCategory_id])
+}
+
+// table for Event-SubSkill rewards
+model EventSkillReward {
+  id                  Int               @id @default(autoincrement())
+  event_id            Int
+  subSkillCategory_id Int
+  levelType           levelType            // "I", "II", "III", "IV"
+  baseExperience      Int               // exp พื้นฐานสำหรับ 
+  bonusExperience     Int               @default(0) // exp โบนัสสำหรับ 
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  
+  // Relations
+  event               Event             @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  subSkillCategory    SubSkillCategory  @relation(fields: [subSkillCategory_id], references: [id])
+
+  @@index([subSkillCategory_id])
+}
+
+enum levelType {
+  I
+  II
+  III
+  IV
+}
+
+model EventStaff {
+  id              Int         @id @default(autoincrement())
+  event_id        Int
+  user_id         Int
+  StaffRole_id    Int
+
+  status          RegistrationStatus     
+  role            StaffRole   @relation(fields: [StaffRole_id], references: [id])      
+  responsibilities_TH String?    
+  responsibilities_EN String?
+
+  assignedAt      DateTime    @default(now())
+  assignedBy      String?     
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  checkedIn       Boolean                 @default(false)
+  checkInTime     DateTime?
+  checkedOut      Boolean                 @default(false)
+  checkOutTime    DateTime?
+  
+  event           Event       @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  user            User        @relation(fields: [user_id], references: [id])
+  
+  @@unique([event_id, user_id])
+  @@index([user_id])
+}
+
+model StaffRole{
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  canScanQR   Boolean  @default(false) //todo: ต้องทำ
+  description_TH String?
+  description_EN String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  eventStaffs EventStaff[]
+}
+
+enum EventStatus {
+  DRAFT           // ร่าง
+  PUBLISHED       // พร้อมเผยแพร่
+  COMPLETED       // เสร็จสิ้น
+  CANCELLED       // ยกเลิก
+}
+
+model EventPhoto {
+  id          Int      @id @default(autoincrement())
+  event_id    Int
+
+  cloudinaryImage_id Int
+
+  caption_TH  String?
+  caption_EN  String?
+  isMain      Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  event      Event @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  cloudinaryImage   CloudinaryImage  @relation(fields: [cloudinaryImage_id], references: [id], onDelete: Cascade)
+
+  @@unique([event_id, cloudinaryImage_id])
+  @@index([event_id, isMain])
+}
+
+// todo: น่าจะไม่ได้ใช้แล้วมั้ง 
+model EventPrerequisite {
+  id                      Int      @id @default(autoincrement())
+  event_id                Int
+  prerequisite_event_id   Int
+  type                    PrerequisiteType
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  event                    Event @relation(fields: [event_id], references: [id])
+  
+  @@unique([event_id, prerequisite_event_id])
+}
+
+enum PrerequisiteType {
+  MUST_COMPLETE       // ต้องผ่านกิจกรรมนี้มาก่อน
+  MUST_NOT_COMPLETE   // ต้องไม่เคยผ่านกิจกรรมนี้มาก่อน
+  RECOMMENDED         // แนะนำให้ผ่านมาก่อน
+}
+
+// ========== Registration ==========
+
+model EventRegistration {
+  id              Int         @id @default(autoincrement())
+  user_id         Int
+  event_id       Int
+  checkInSlot_id  Int?        // Track which slot the user registered for (for time-slot events)
+  registrationType RegistrationType       @default(NORMAL)
+  status          RegistrationStatus      
+  
+  // Check-in/out
+  checkedIn       Boolean                 @default(false)
+  checkInTime     DateTime?
+  checkedOut      Boolean                 @default(false)
+  checkOutTime    DateTime?
+  
+  // Experience & Evaluation
+  experienceEarned Int                    @default(0)
+  hasEvaluated    Boolean                 @default(false)
+  
+  // Cancellation
+  cancellationReason String?
+  cancelledAt     DateTime?
+  
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  
+  user            User                     @relation(fields: [user_id], references: [id])
+  event           Event                     @relation(fields: [event_id], references: [id])
+  
+  checkInRecords  UserCheckInRecord[]
+  evaluationResponses EvaluationResponse[]
+
+  @@unique([user_id, event_id])
+  @@index([event_id, status])
+  @@index([user_id, status])
+}
+
+model UserCheckInRecord {
+  id                    Int                 @id @default(autoincrement())
+  eventRegistration_id  Int
+  checkInTimeSlot_id    Int
+  
+  // Check-in details
+  checkedIn             Boolean             @default(false)
+  checkInTime           DateTime?
+  isLate                Boolean             @default(false)
+  
+  // Check-out details  
+  checkedOut            Boolean             @default(false)
+  checkOutTime          DateTime?
+  
+  // Experience earned in this slot
+  expEarned             Int                 @default(0)
+  
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  eventRegistration     EventRegistration   @relation(fields: [eventRegistration_id], references: [id], onDelete: Cascade)
+  checkInTimeSlot       CheckInTimeSlot     @relation(fields: [checkInTimeSlot_id], references: [id])
+  
+  @@unique([eventRegistration_id, checkInTimeSlot_id])
+  @@index([eventRegistration_id])
+  @@index([checkInTimeSlot_id])
+}
+
+model EventRegistrationCancellation {
+  id              Int         @id @default(autoincrement())
+  user_id         Int
+  event_id        Int
+  status          RegistrationStatus
+  reason          String?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+}
+
+enum RegistrationType {
+  NORMAL          // ลงทะเบียนปกติ
+  WALK_IN         // Walk-in
+  WAITLIST        // อยู่ในรายการรอ (จำพวกลา)
+}
+
+enum RegistrationStatus {
+  PENDING         // รอดำเนินการ
+  REGISTERED      // ลงทะเบียนแล้ว
+
+  ATTENDED        // กำลังเข้าร่วม
+  COMPLETED       // เสร็จสิ้น (ได้ exp แล้ว)
+  INCOMPLETE      // ไม่เสร็จสิ้น (ไม่ได้เช็คเอ้าท์)
+
+  CANCELLED       // ยกเลิก
+  LATE            // มาสาย
+  LATE_PENALTY    // ถูกหักคะแนนเพราะมาสาย
+  ABSENT          // ขาดกิจกรรม
+
+  UNDER_REVIEW    // อยู่ระหว่างการตรวจสอบ
+  NEED_MORE_INFO  // ต้องการข้อมูลเพิ่มเติม
+  APPROVED        // ยืนยันคำขอ
+  REJECTED        // ปฏิเสธคำขอ
+}
+
+// ========== Event Invitation Management ==========
+
+model EventInvitation {
+  id              Int                @id @default(autoincrement())
+  event_id        Int
+  email           String
+  firstName       String?
+  lastName        String?
+  studentId       Int?               // CMU ID (ถ้ามี)
+  status          InvitationStatus   @default(PENDING)
+  invitedBy       Int                // User ID ของคนที่เชิญ
+  invitedAt       DateTime           @default(now())
+  registeredAt    DateTime?
+  note            String?            // บันทึกเพิ่มเติม
+  
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  
+  event           Event              @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  
+  @@unique([event_id, email])
+  @@index([event_id, status])
+  @@index([email])
+  @@index([studentId])
+}
+
+enum InvitationStatus {
+  PENDING         // รอลงทะเบียน
+  REGISTERED      // ลงทะเบียนแล้ว
+  EXPIRED         // หมดอายุ
+  CANCELLED       // ยกเลิกการเชิญ
+}
+
+// ========== Experience Tracking ==========
+
+model ExperienceHistory {
+  id                 Int              @id @default(autoincrement())
+  user_id            Int
+  activity_id        Int?             
+  subSkillCategory_id Int             // เปลี่ยนจาก skillCategory_id
+  experienceGained   Int              // อาจเป็นลบได้ (กรณีหัก exp)
+  reason_TH          String
+  reason_EN          String
+  type               ExpType
+  
+  // Level tracking
+  previousLevel      Int?
+  newLevel           Int?
+  previousExp        Int              @default(0)
+  newExp             Int              @default(0)
+  bonusApplied       Boolean          @default(false)
+  
+  createdAt          DateTime         @default(now())
+  
+  user               User             @relation(fields: [user_id], references: [id])
+  subSkillCategory   SubSkillCategory @relation(fields: [subSkillCategory_id], references: [id])
+  
+  @@index([user_id, subSkillCategory_id])
+  @@index([createdAt])
+  @@index([type])
+}
+
+enum ExpType {
+  ACTIVITY_COMPLETION    // จากการทำกิจกรรมเสร็จ
+  BONUS_REWARD           // โบนัสพิเศษ
+  LATE_PENALTY           // หักเพราะมาสาย
+  MANUAL_ADJUSTMENT      // ปรับโดย admin
+  EVALUATION_BONUS       // โบนัสจากการประเมิน
+}
+
+// ========== Evaluation System ==========
+
+model EventEvaluation {
+  id              Int      @id @default(autoincrement())
+  event_id        Int
+  title_TH        String
+  title_EN        String
+  description_TH  String?
+  description_EN  String?
+  isActive        Boolean  @default(true)
+  isRequired      Boolean  @default(false)
+  maxScore        Int      @default(0) // คะแนนเต็ม (คำนวณจาก questions)
+  openAt          DateTime?
+  closeAt         DateTime?
+  type_evaluation EvaluationType @default(PRE_TEST)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  event           Event               @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  questions       EvaluationQuestion[]
+  responses       EvaluationResponse[]
+
+  @@index([event_id, isActive])
+}
+enum EvaluationType {
+  PRE_TEST    // แบบทดสอบก่อนกิจกรรม
+  POST_TEST   // แบบทดสอบหลังกิจกรรม
+}
+
+model EvaluationQuestion {
+  id              Int      @id @default(autoincrement())
+  evaluation_id   Int
+  questionNumber  Int
+  question_TH     String
+  question_EN     String
+  type            QuestionType
+  isRequired      Boolean  @default(true)
+  options         Json?    // Array of QuestionOption
+  maxScore        Int      @default(0) // คะแนนเต็มของคำถามนี้
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  evaluation      EventEvaluation @relation(fields: [evaluation_id], references: [id], onDelete: Cascade)
+  answers         EvaluationAnswer[]
+  
+  @@unique([evaluation_id, questionNumber])
+  @@index([evaluation_id])
+}
+
+enum QuestionType {
+  TEXT
+  TEXTAREA
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  RATING
+}
+
+model EvaluationResponse {
+  id              Int      @id @default(autoincrement())
+  evaluation_id   Int
+  user_id         Int
+  registration_id Int      // ต้องมีการลงทะเบียนและเช็คอิน
+  totalScore      Int      @default(0) // คะแนนรวมที่ได้
+  submittedAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  evaluation      EventEvaluation     @relation(fields: [evaluation_id], references: [id], onDelete: Cascade)
+  user            User                @relation(fields: [user_id], references: [id])
+  registration    EventRegistration   @relation(fields: [registration_id], references: [id])
+  answers         EvaluationAnswer[]
+  
+  @@unique([evaluation_id, user_id])
+  @@index([evaluation_id, user_id])
+  @@index([registration_id])
+}
+
+model EvaluationAnswer {
+  id              Int      @id @default(autoincrement())
+  response_id     Int
+  question_id     Int
+  answerText      String?  // สำหรับ TEXT/TEXTAREA
+  answerChoices   String[] @default([]) // สำหรับ SINGLE/MULTIPLE_CHOICE
+  answerRating    Int?     // สำหรับ RATING (1-5)
+  score           Int      @default(0) // คะแนนที่ได้จากคำตอบนี้
+  createdAt       DateTime @default(now())
+
+  response        EvaluationResponse  @relation(fields: [response_id], references: [id], onDelete: Cascade)
+  question        EvaluationQuestion  @relation(fields: [question_id], references: [id])
+  
+  @@unique([response_id, question_id])
+  @@index([response_id])
+  @@index([question_id])
+}
+
+// ========== Skill Assessment ==========
+
+model SkillEvaluation {
+  id                 Int              @id @default(autoincrement())
+  user_id            Int
+  subSkillCategory_id Int             // เปลี่ยนจาก skillCategory_id
+  evaluator_id       String           // ผู้ประเมิน (อาจารย์/ผู้สอน)
+  score              Float            // คะแนนประเมิน (0-100)
+  level              Int              // ระดับที่ประเมินได้ (0-4)
+  feedback_TH        String?
+  feedback_EN        String?
+  isOfficial         Boolean          @default(false) // การประเมินอย่างเป็นทางการ
+  evaluatedAt        DateTime         @default(now())
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  
+  user               User             @relation(fields: [user_id], references: [id])
+  subSkillCategory   SubSkillCategory @relation(fields: [subSkillCategory_id], references: [id])
+  
+  @@index([user_id, subSkillCategory_id])
+}
+
+// ========== AcademicYear Management ==========
+model AcademicYear {
+  id            Int      @id @default(autoincrement())
+  year_TH          Int   @unique    // ปีการศึกษา เช่น 2565, 2566
+  year_EN          Int   @unique    // ปีการศึกษา เช่น 2022, 2023
+  semesterStart DateTime            // วันเปิดเทอม (เทอม 1)
+  semesterEnd   DateTime            // วันปิดเทอม (เทอม 3/summer)
+
+  //สกิลที่ใช้ในปีการศึกษานี้
+  // todo: ต้องใช้ woker มาเช็คว่าปีไหนมาใช้สกิลอะไรบ้าง
+  mainSkillCategories Int[]   @default([]) 
+
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([year_TH, isActive])
+  @@index([year_EN, isActive])
+  @@index([semesterStart, semesterEnd])
+}
+
+
+
+// ========== System Settings ==========
+
+model SystemSettings {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  value       Json
+  description String?
+  updatedBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([key])
+}
+
+// ========== Notification System ==========
+
+model Notification {
+  id          Int              @id @default(autoincrement())
+  user_id     Int
+  type        NotificationType
+  title_TH    String
+  title_EN    String
+  message_TH  String
+  message_EN  String
+  data        Json?            // ข้อมูลเพิ่มเติม
+  isRead      Boolean         @default(false)
+  readAt      DateTime?
+  createdAt   DateTime        @default(now())
+
+  user               User            @relation(fields: [user_id], references: [id])
+
+  @@index([user_id, isRead])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  EVENT_REMINDER       // แจ้งเตือนกิจกรรม
+  REGISTRATION_CONFIRMED  // ยืนยันการลงทะเบียน
+  LEVEL_UP               // เลื่อนระดับ
+  EVALUATION_AVAILABLE   // มีการประเมินให้ทำ
+  SYSTEM_ANNOUNCEMENT    // ประกาศระบบ
+}
+
+// ========== Icon lucide List ==========
+
+model Icon {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  url         String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+}
+
+
+// ========== Cloudinary Image Management ==========
+
+model CloudinaryImage {
+  id            Int      @id @default(autoincrement())
+  publicId      String   @unique     // Cloudinary public_id
+  url           String               // Cloudinary URL
+  secureUrl     String               // Cloudinary secure URL
+  format        String?              // jpg, png, webp, etc.
+  width         Int?
+  height        Int?
+  bytes         Int?                 // ขนาดไฟล์
+  folder        String?              // โฟลเดอร์ใน Cloudinary
+  resourceType  String   @default("image") // image, video, raw, auto
+  
+  // Metadata
+  originalFilename String?
+  uploadedBy    Int?                    // User ID ที่อัพโหลด
+  tags          String[]  @default([])  // tags สำหรับจัดหมวดหมู่
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  eventBanners  LeapBanner[]
+  eventLogos    LeapLogo[]
+  eventPhotos   EventPhoto[]
+  
+  @@index([publicId])
+  @@index([folder])
+  @@index([uploadedBy])
+}
+
+// Banner
+model LeapBanner {
+  id                Int      @id @default(autoincrement())
+  cloudinaryImage_id Int
+  name_TH          String
+  name_EN          String
+
+  isMain            Boolean  @default(false)  // แบนเนอร์หลัก
+  sortOrder         Int      @default(0)
+  isActive          Boolean  @default(true)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  cloudinaryImage   CloudinaryImage  @relation(fields: [cloudinaryImage_id], references: [id], onDelete: Cascade)
+  
+}
+
+// Logo
+model LeapLogo {
+  id                Int      @id @default(autoincrement())
+  cloudinaryImage_id Int
+  name_TH          String
+  name_EN          String
+  
+  isActive          Boolean  @default(true)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  cloudinaryImage   CloudinaryImage  @relation(fields: [cloudinaryImage_id], references: [id], onDelete: Cascade)
+  
+}

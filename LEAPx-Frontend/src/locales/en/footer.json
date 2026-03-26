@@ -1,0 +1,41 @@
+{
+  "brand": {
+    "logoAlt": "LEAP",
+    "name": "Learning & Experience Advancement Platform",
+    "tagline": "A platform for experiential learning and competency development",
+    "copyright": "© 2025 LEAP Platform. All rights reserved."
+  },
+  "sections": {
+    "categories": "Activity categories",
+    "quickLinks": "Quick links",
+    "contact": "Contact"
+  },
+  "categories": {
+    "itemPrefix": "Activities by "
+  },
+  "quickLinks": {
+    "items": {
+      "about": "About us",
+      "faq": "FAQ",
+      "contact": "Contact"
+    }
+  },
+  "contact": {
+    "org": "Faculty of Engineering, Chiang Mai University",
+    "phone": "Phone: 053-994179 ext. 100, 111, 112, 115",
+    "social": {
+      "facebookHref": "#",
+      "instagramHref": "#",
+      "locationHref": "#"
+    }
+  },
+  "policies": {
+    "terms": "Terms of service",
+    "privacy": "Privacy policy",
+    "security": "Security",
+    "cookies": "Cookie policy"
+  },
+  "placeholders": {
+    "comingSoon": "Coming soon"
+  }
+}
