@@ -1,8 +1,9 @@
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
+//! now not use this fuction
 firebase.initializeApp({
-    apiKey: "AIzaSyDB7gaH0jxNtqcFqbt-FYvsXc-k_oukdZU",
+    apiKey: "-",
     authDomain: "leapx-ef2b7.firebaseapp.com",
     projectId: "leapx-ef2b7",
     storageBucket: "leapx-ef2b7.firebasestorage.app",
