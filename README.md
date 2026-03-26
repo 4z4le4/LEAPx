@@ -97,10 +97,6 @@ docker compose up --build
 ## เอกสาร API
 
 - เอกสาร API ทั้งหมดอยู่ใน `LEAPx-Backend/docs/`
-- จุดเริ่มต้นแนะนำ:
-  - `LEAPx-Backend/docs/API_AUTH.md`
-  - `LEAPx-Backend/docs/API_EVENTS.md`
-  - `LEAPx-Backend/docs/API_SKILLS_EXP.md`
 
 ## Workflow แนะนำสำหรับทีมที่จะพัฒนาต่อ
 
